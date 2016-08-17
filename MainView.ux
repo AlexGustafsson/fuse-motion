@@ -1,0 +1,44 @@
+<App>
+	<ClientPanel Margin="10">
+		<JavaScript>
+			var Motion = require("Motion");
+			var Observable = require("FuseJS/Observable");
+
+			accelerometer = Observable({x: 0, y: 0, z: 0});
+			gyroscope = Observable({x: 0, y: 0, z: 0});
+			motion = Observable({yaw: 0, pitch: 0, roll: 0});
+
+      Motion.onAccelerometerChanged = function(x, y, z){
+				accelerometer.value = {x: x, y: y, z: z};
+			}
+
+      Motion.onGyroscopeChanged = function(x, y, z){
+				gyroscope.value = {x: x, y: y, z: z};
+			}
+
+      Motion.onMotionChanged = function(yaw, pitch, roll){
+				motion.value = {yaw: yaw, pitch: pitch, roll: roll};
+			}
+
+			Motion.Subscribe("accelerometer gyroscope motion");
+
+			module.exports = {accelerometer: accelerometer, gyroscope: gyroscope, motion: motion};
+		</JavaScript>
+		<StackPanel>
+      <Text Value="Accelerometer" />
+      <Text Value="{accelerometer.x}" FontSize="20"/>
+      <Text Value="{accelerometer.y}" FontSize="20"/>
+      <Text Value="{accelerometer.z}" FontSize="20"/>
+
+      <Text Value="Gyroscope" />
+      <Text Value="{gyroscope.x}" FontSize="20"/>
+      <Text Value="{gyroscope.y}" FontSize="20"/>
+      <Text Value="{gyroscope.z}" FontSize="20"/>
+
+      <Text Value="Motion" />
+      <Text Value="{motion.yaw}" FontSize="20"/>
+      <Text Value="{motion.pitch}" FontSize="20"/>
+      <Text Value="{motion.roll}" FontSize="20"/>
+		</StackPanel>
+	</ClientPanel>
+</App>

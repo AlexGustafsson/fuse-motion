@@ -1,0 +1,20 @@
+{
+  "Title": "Motion",
+  "RootNamespace": "",
+  "Packages": [
+    "Fuse",
+    "FuseJS",
+    "Fuse.Scripting"
+  ],
+  "Includes": [
+    "Motion.hh:ObjCHeader:iOS",
+    "Motion.mm:ObjCSource:iOS",
+    "*"
+  ],
+  "Mobile": {
+    "Orientations": "Portrait"
+  },
+  "iOS": {
+    "BundleIdentifier": "com.alexgustafsson.motion"
+  }
+}
