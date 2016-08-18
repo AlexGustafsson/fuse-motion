@@ -164,7 +164,7 @@ No more phone thumb from "swiping right"! Train your wrist by using the gyroscop
 # Contributing
 <a name="contributing"></a>
 
-Any help with the project is more than welcome. This is my first take on Uno and Objective-C so some things might not be following best practices or incorrectly implemented all together.
+Any help with the project is more than welcome. This is my first take on Uno and Objective-C so some things might not be following best practices or be incorrectly implemented all together.
 
 #### TODO:
 
