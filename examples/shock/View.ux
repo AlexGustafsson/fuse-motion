@@ -1,0 +1,44 @@
+<Page ux:Class="Shock" ux:Name="self">
+  <JavaScript>
+    var Motion = require("Motion");
+    var Observable = require("FuseJS/Observable");
+
+    var shocking = Observable(false);
+
+    var previousValues = [];
+
+    Motion.onMotionChanged = function(values){
+      values = JSON.parse(values);
+
+      if(values.error)
+        return;
+
+      var sum = {x: 0, y: 0, z: 0};
+
+      for(var i = 0; i < previousValues.length; i++){
+        sum.x += previousValues[i].x;
+        sum.y += previousValues[i].y;
+        sum.z += previousValues[i].z;
+      }
+
+      sum = {x: sum.x / previousValues.length, y: sum.y / previousValues.length, z: sum.z / previousValues.length};
+
+      if(values.userAcceleration.x - sum.x > 1 || values.userAcceleration.y - sum.y > 1 || values.userAcceleration.z - sum.z > 1)
+        shocking.value = true;
+      else
+        shocking.value = false;
+
+      previousValues.push(values.userAcceleration);
+      if(previousValues.length > 5)
+        previousValues.shift();
+    }
+
+    module.exports = {shocking: shocking};
+  </JavaScript>
+
+<WhileTrue Value="{shocking}">
+  <Change Target="self.Background" Value="Fuse.Drawing.Brushes.Red" />
+</WhileTrue>
+
+<Text Value="Hit me" FontSize="20" Alignment="Center"/>
+</Page>

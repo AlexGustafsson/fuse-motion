@@ -7,106 +7,168 @@
 
 -(id)init {
   if (self = [super init]) {
-    self.pollingTimer = nil;
+
   }
   return self;
 }
 
-bool accelerometerSubscribed = false;
-bool gyroscopeSubscribed = false;
-bool motionSubscribed = false;
+/*
+//Register for Coremotion notifications
+[self.motionActivityManager startActivityUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMMotionActivity *activity)
+{
+  NSLog(@"Got a core motion update");
+  NSLog(@"Current activity date is %f",activity.timestamp);
+  NSLog(@"Current activity confidence from a scale of 0 to 2 - 2 being best- is: %ld",activity.confidence);
+  NSLog(@"Current activity type is unknown: %i",activity.unknown);
+  NSLog(@"Current activity type is stationary: %i",activity.stationary);
+  NSLog(@"Current activity type is walking: %i",activity.walking);
+  NSLog(@"Current activity type is running: %i",activity.running);
+  NSLog(@"Current activity type is automotive: %i",activity.automotive);
+}];
+*/
 
-//Poll for values and call each callback with xyz
-- (void) pollValues:(NSTimer *) timer {
-  if(accelerometerSubscribed){
-    float accelerometer_x = self.manager.accelerometerData.acceleration.x;
-    float accelerometer_y = self.manager.accelerometerData.acceleration.y;
-    float accelerometer_z = self.manager.accelerometerData.acceleration.z;
+//Continously retrieve 3D accelerometer values measured in G:s
+- (void) getAccelerometerValues: (double)interval withCallback:(void(^)(NSString*)) callback{
+  if(self.manager == nil)
+      self.manager = [[CMMotionManager alloc] init];
 
-    self.accelerometerCallback(accelerometer_x, accelerometer_y, accelerometer_x);
-  }
+  if(self.manager.accelerometerAvailable){
+    self.manager.accelerometerUpdateInterval = interval;
 
-  if(gyroscopeSubscribed){
-    float gyroscope_x = self.manager.gyroData.rotationRate.x;
-    float gyroscope_y = self.manager.gyroData.rotationRate.y;
-    float gyroscope_z = self.manager.gyroData.rotationRate.z;
+    [self.manager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue]
+     withHandler:^(CMAccelerometerData *accelerometer, NSError *error)
+     {
+       if(error != nil){
+         callback([NSString stringWithFormat:@"{\
+           \"error\": {\"description\": %@}}",
+           error.localizedDescription
+           ]);
 
-    self.gyroscopeCallback(gyroscope_x, gyroscope_y, gyroscope_z);
-  }
+         return;
+       }
 
-  if(motionSubscribed){
-    float yaw = 180 / M_PI * self.manager.deviceMotion.attitude.yaw;
-    float pitch = 180 / M_PI * self.manager.deviceMotion.attitude.pitch;
-    float roll = 180 / M_PI * self.manager.deviceMotion.attitude.roll;
-
-    self.motionCallback(yaw, pitch, roll);
+        callback([NSString stringWithFormat:@"{\"acceleration\":{\"x\": %f, \"y\": %f, \"z\": %f}}",
+          accelerometer.acceleration.x, accelerometer.acceleration.y, accelerometer.acceleration.z
+          ]);
+     }];
   }
 }
 
-- (void) startTimer {
-    if(self.pollingTimer == nil){
-        //Start polling for data in a speed of 10Hz
-        self.pollingTimer = [NSTimer timerWithTimeInterval:0.1 target:self selector:@selector(pollValues:) userInfo:nil repeats:YES];
+//Continously retrieve 3D rotation rates measured in angles
+- (void) getGyroValues: (double)interval withCallback:(void(^)(NSString*)) callback{
+  if(self.manager == nil)
+      self.manager = [[CMMotionManager alloc] init];
 
-        [[NSRunLoop mainRunLoop] addTimer:self.pollingTimer forMode:NSDefaultRunLoopMode];
+  if(self.manager.gyroAvailable){
+    self.manager.gyroUpdateInterval = interval;
 
+    [self.manager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
+     withHandler:^(CMGyroData *gyro, NSError *error)
+     {
+       if(error != nil){
+         callback([NSString stringWithFormat:@"{\
+           \"error\": {\"description\": %@}}",
+           error.localizedDescription
+           ]);
+
+         return;
+       }
+
+         //Return in degrees instead of radians
+         double degreesFromRadian = 180 / M_PI;
+
+         callback([NSString stringWithFormat:@"{\"rotationRate\":{\"x\": %f, \"y\": %f, \"z\": %f}}",
+           degreesFromRadian * gyro.rotationRate.x, degreesFromRadian * gyro.rotationRate.y, degreesFromRadian * gyro.rotationRate.z
+           ]);
+     }];
+  }
+}
+
+- (void) getMagnetometerValues: (double)interval withCallback:(void(^)(NSString*)) callback{
+  if(self.manager == nil)
+      self.manager = [[CMMotionManager alloc] init];
+
+  if(self.manager.magnetometerAvailable){
+    self.manager.magnetometerUpdateInterval = interval;
+
+    [self.manager startMagnetometerUpdatesToQueue:[NSOperationQueue mainQueue]
+     withHandler:^(CMMagnetometerData *magnetometer, NSError *error)
+     {
+       if(error != nil){
+         callback([NSString stringWithFormat:@"{\
+           \"error\": {\"description\": %@}}",
+           error.localizedDescription
+           ]);
+
+         return;
+       }
+
+        callback([NSString stringWithFormat:@"{\"magneticField\": {\"x\": %f, \"y\": %f, \"z\": %f}}",
+          magnetometer.magneticField.x, magnetometer.magneticField.y, magnetometer.magneticField.z
+          ]);
+     }];
+  }
+}
+
+- (void) getMotionValues: (double)interval withCallback:(void(^)(NSString*)) callback{
+    if(self.manager == nil)
         self.manager = [[CMMotionManager alloc] init];
 
-        //Start updating accelerometer data in a speed of 20Hz
-        self.manager.accelerometerUpdateInterval = 0.05;
+  if(self.manager.deviceMotionAvailable){
+    self.manager.deviceMotionUpdateInterval = interval;
 
-        //Start updating gyroscope data in a speed of 20Hz
-        self.manager.gyroUpdateInterval = 0.05;
+    [self.manager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue]
+     withHandler:^(CMDeviceMotion *motion, NSError *error)
+     {
+       if(error != nil){
+         callback([NSString stringWithFormat:@"{\
+           \"error\": {\"description\": %@}}",
+           error.localizedDescription
+           ]);
 
-        //Start updating device motion data in a speed of 20Hz
-        self.manager.deviceMotionUpdateInterval = 0.05;
-    }
-}
+         return;
+       }
 
-- (void) stopTimer {
-  if(!accelerometerSubscribed && !gyroscopeSubscribed && !motionSubscribed){
-    [self.pollingTimer invalidate];
-    self.pollingTimer = nil;
+       //Return in degrees instead of radians
+         double degreesFromRadian = 180 / M_PI;
+
+         //Return in degrees instead of radians
+         double degreesFromRadian = 180 / M_PI;
+
+         CMQuaternion quat = motion.attitude.quaternion;
+         double yaw = asin(2*(quat.x*quat.z - quat.w*quat.y));
+
+         if (self.previousAttitudeYaw == 0) {
+             self.previousAttitudeYaw = yaw;
+         }
+
+         // kalman filtering
+         static float q = 0.1;   // process noise
+         static float r = 0.1;   // sensor noise
+         static float p = 0.1;   // estimated error
+         static float k = 0.5;   // kalman filter gain
+
+         float x = self.previousAttitudeYaw;
+         p = p + q;
+         k = p / (p + r);
+         x = x + k*(yaw - x);
+         p = (1 - k)*p;
+         self.previousAttitudeYaw = x;
+
+        callback([NSString stringWithFormat:@"{\
+          \"attitude\": {\"yaw\": %f, \"pitch\": %f, \"roll\": %f}, \
+           \"rotationRate\": {\"x\": %f, \"y\": %f, \"z\": %f}, \
+           \"gravity\": {\"x\": %f, \"y\": %f, \"z\": %f}, \
+           \"magneticField\": {\"accuracy\": %d, \"x\": %f, \"y\": %f, \"z\": %f}, \
+           \"userAcceleration\": {\"x\": %f, \"y\": %f, \"z\": %f}}",
+           x * degreesFromRadian, motion.attitude.pitch * degreesFromRadian, motion.attitude.roll * degreesFromRadian,
+           motion.rotationRate.x, motion.rotationRate.y, motion.rotationRate.z,
+           motion.gravity.x, motion.gravity.y, motion.gravity.z,
+           motion.magneticField.accuracy, motion.magneticField.field.x, motion.magneticField.field.y, motion.magneticField.field.z,
+           motion.userAcceleration.x, motion.userAcceleration.y, motion.userAcceleration.z
+           ]);
+     }];
   }
-}
-
-/*// ACCELEROMETER //*/
-- (void) subscribeAccelerometer: (void(^)(float, float, float)) callback {
-  self.accelerometerCallback = callback;
-  [self.manager startAccelerometerUpdates];
-  accelerometerSubscribed = true;
-  [self startTimer];
-}
-- (void) unsubscribeAccelerometer{
-  [self.manager stopAccelerometerUpdates];
-  accelerometerSubscribed = false;
-  [self stopTimer];
-}
-
-/*// GYROSCOPE //*/
-- (void) subscribeGyroscope: (void(^)(float, float, float)) callback {
-  self.gyroscopeCallback = callback;
-  [self.manager startGyroUpdates];
-  gyroscopeSubscribed = true;
-  [self startTimer];
-}
-- (void) unsubscribeGyroscope{
-  [self.manager stopGyroUpdates];
-  gyroscopeSubscribed = true;
-  [self stopTimer];
-}
-
-/*// MOTION //*/
-- (void) subscribeMotion: (void(^)(float, float, float)) callback {
-  self.motionCallback = callback;
-  [self.manager startDeviceMotionUpdates];
-  motionSubscribed = true;
-  [self startTimer];
-}
-- (void) unsubscribeMotion{
-  [self.manager stopDeviceMotionUpdates];
-  motionSubscribed = false;
-  [self stopTimer];
 }
 
 @end

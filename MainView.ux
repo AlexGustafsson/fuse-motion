@@ -1,44 +1,71 @@
 <App>
-	<ClientPanel Margin="10">
-		<JavaScript>
-			var Motion = require("Motion");
-			var Observable = require("FuseJS/Observable");
+  <Panel>
+    <JavaScript File="Motion.js"/>
 
-			accelerometer = Observable({x: 0, y: 0, z: 0});
-			gyroscope = Observable({x: 0, y: 0, z: 0});
-			motion = Observable({yaw: 0, pitch: 0, roll: 0});
+    <JavaScript>
+      var Motion = require("Motion");
+      Motion.Subscribe("accelerometer magnetometer gyroscope motion", 0.2);
 
-      Motion.onAccelerometerChanged = function(x, y, z){
-				accelerometer.value = {x: x, y: y, z: z};
-			}
+      module.exports = {
+        goToValues: function() { router.goto("Values"); },
+        goToGravity: function() { router.goto("Gravity"); },
+        goToShock: function() { router.goto("Shock"); },
+        goToSwipe: function() { router.goto("Swipe"); }
+      };
+    </JavaScript>
 
-      Motion.onGyroscopeChanged = function(x, y, z){
-				gyroscope.value = {x: x, y: y, z: z};
-			}
+    <Router ux:Name="router" />
 
-      Motion.onMotionChanged = function(yaw, pitch, roll){
-				motion.value = {yaw: yaw, pitch: pitch, roll: roll};
-			}
+    <DockPanel>
+      <PageIndicator Dock="Bottom" Alignment="Center" Margin="5" Navigation="slides">
+          <Circle ux:Template="DotTemplate" Width="10" Height="10"  Margin="4">
+              <SolidColor ux:Name="dotStrokeBody" Color="#0000" />
+              <Stroke ux:Name="dotStroke" Width="2">
+                  <SolidColor ux:Name="dotStrokeColor" Color="#bbb" />
+              </Stroke>
+              <ActivatingAnimation>
+                  <Change dotStrokeBody.Color="#aaa" />
+                  <Change dotStrokeColor.Color="#aaa" />
+              </ActivatingAnimation>
+          </Circle>
+      </PageIndicator>
+    </DockPanel>
 
-			Motion.Subscribe("accelerometer gyroscope motion");
-
-			module.exports = {accelerometer: accelerometer, gyroscope: gyroscope, motion: motion};
-		</JavaScript>
-		<StackPanel>
-      <Text Value="Accelerometer" />
-      <Text Value="{accelerometer.x}" FontSize="20"/>
-      <Text Value="{accelerometer.y}" FontSize="20"/>
-      <Text Value="{accelerometer.z}" FontSize="20"/>
-
-      <Text Value="Gyroscope" />
-      <Text Value="{gyroscope.x}" FontSize="20"/>
-      <Text Value="{gyroscope.y}" FontSize="20"/>
-      <Text Value="{gyroscope.z}" FontSize="20"/>
-
-      <Text Value="Motion" />
-      <Text Value="{motion.yaw}" FontSize="20"/>
-      <Text Value="{motion.pitch}" FontSize="20"/>
-      <Text Value="{motion.roll}" FontSize="20"/>
-		</StackPanel>
-	</ClientPanel>
+    <PageControl ux:Name="slides" ClipToBounds="true">
+      <Page ux:Name="Home">
+        <ScrollView>
+          <StackPanel>
+            <Panel Margin="25" Padding="10" Clicked="{goToValues}" Background="0, 0, 0, 0.2">
+              <StackPanel>
+                <Text Value="Values" FontSize="20" />
+                <Text Value="Displays all available values" />
+              </StackPanel>
+            </Panel>
+            <Panel Margin="25" Padding="10" Clicked="{goToGravity}" Background="0, 0, 0, 0.2">
+              <StackPanel>
+                <Text Value="Gravity" FontSize="20" />
+                <Text Value="Uses magnetometer to apply a gravity effect to a dropshadow" TextWrapping="Wrap"/>
+              </StackPanel>
+            </Panel>
+            <Panel Margin="25" Padding="10" Clicked="{goToShock}" Background="0, 0, 0, 0.2">
+              <StackPanel>
+                <Text Value="Shock" FontSize="20" />
+                <Text Value="Uses accelerometer to detect when the phone is hit" TextWrapping="Wrap"/>
+              </StackPanel>
+            </Panel>
+            <Panel Margin="25" Padding="10" Clicked="{goToSwipe}" Background="0, 0, 0, 0.2">
+              <StackPanel>
+                <Text Value="Swipe" FontSize="20" />
+                <Text Value="No more phone thumb from swiping right! Train your wrist by using the gyroscope to enable a swipe like feature" TextWrapping="Wrap"/>
+              </StackPanel>
+            </Panel>
+          </StackPanel>
+        </ScrollView>
+      </Page>
+      <Values ux:Name="Values"/>
+      <Gravity ux:Name="Gravity"/>
+      <Shock ux:Name="Shock"/>
+      <Swipe ux:Name="Swipe"/>
+    </PageControl>
+  </Panel>
 </App>

@@ -1,0 +1,58 @@
+<Page ux:Class="Swipe" ux:Name="self">
+  <JavaScript>
+    var Motion = require("Motion");
+    var Observable = require("FuseJS/Observable");
+
+    var swipedRight = Observable(false);
+    var swipedLeft = Observable(false);
+
+    var previousValues = [];
+    var updates = 0;
+
+    Motion.onMotionChanged = function(values){
+      values = JSON.parse(values);
+
+      if(values.error)
+        return;
+
+      var sum = 0;
+
+      for(var i = 0; i < previousValues.length; i++)
+        sum += previousValues[i];
+
+      sum = sum / previousValues.length;
+
+      console.log(values.attitude.yaw - sum);
+
+      if(values.attitude.yaw - sum  > 30)
+        swipedLeft.value = true;
+      else if(values.attitude.yaw - sum  < -30)
+        swipedRight.value = true;
+      else if(updates > 15){
+        swipedRight.value = false;
+        swipedLeft.value = false;
+        updates = 0;
+      }
+
+      previousValues.push(values.attitude.yaw);
+      if(previousValues.length > 10)
+        previousValues.shift();
+      updates++;
+    }
+
+    module.exports = {swipedLeft: swipedLeft, swipedRight: swipedRight};
+  </JavaScript>
+
+    <WhileTrue Value="{swipedLeft}">
+      <Change Target="left.Opacity" Value="1" />
+    </WhileTrue>
+
+    <WhileTrue Value="{swipedRight}">
+      <Change Target="right.Opacity" Value="1" />
+    </WhileTrue>
+
+  <Grid Rows="1*" Columns="2" Width="100%">
+    <Panel ux:Name="left"  Row="0" Column="1" Background="Red" Opacity="0"/>
+    <Panel ux:Name="right" Row="0" Column="2" Background="Red" Opacity="0"/>
+  </Grid>
+</Page>

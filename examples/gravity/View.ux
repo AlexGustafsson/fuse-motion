@@ -1,0 +1,31 @@
+<Page ux:Class="Gravity" ux:Name="self" Color="#2A363B">
+  <JavaScript>
+    var Motion = require("Motion");
+    var Observable = require("FuseJS/Observable");
+
+    var angle = Observable(90);
+    var distance = Observable(0);
+
+    Motion.onMotionChanged = function(values){
+      values = JSON.parse(values);
+
+      if(values.error)
+        return;
+
+      angle.value = values.attitude.yaw * -1 + 90;
+      distance.value = (1 - Math.abs(values.gravity.z)) * 15;
+    }
+
+    module.exports = {distance: distance, angle: angle};
+  </JavaScript>
+  <EnteringAnimation>
+      <Change Target="self.Color" Value="#2A363B" />
+  </EnteringAnimation>
+  <ExitingAnimation>
+      <Change Target="self.Color" Value="White" />
+  </ExitingAnimation>
+
+ <Circle Color="#E84A5F" Width="248px" Height="248px">
+  <DropShadow Size="10" Distance="{distance}" Spread="0.05" Color="0, 0, 0, 0.3" Angle="{angle}" />
+ </Circle>
+</Page>

@@ -3,22 +3,15 @@
 @interface Motion : NSObject
 
 @property (strong,nonatomic) CMMotionManager *manager;
-@property (strong,nonatomic) NSTimer *pollingTimer;
-@property (strong, nonatomic) void(^accelerometerCallback)(float, float, float);
-@property (strong, nonatomic) void(^gyroscopeCallback)(float, float, float);
-@property (strong, nonatomic) void(^motionCallback)(float, float, float);
 
-- (void) startTimer;
+@property (nonatomic) double previousAttitudeYaw;
 
-- (void) pollValues:(NSTimer *) timer;
+- (void) getAccelerometerValues: (double)interval withCallback:(void(^)(NSString*)) callback;
 
-- (void) subscribeAccelerometer: (void(^)(float, float, float)) callback;
-- (void) unsubscribeAccelerometer;
+- (void) getGyroValues: (double)interval withCallback:(void(^)(NSString*)) callback;
 
-- (void) subscribeGyroscope: (void(^)(float, float, float)) callback;
-- (void) unsubscribeGyroscope;
+- (void) getMagnetometerValues: (double)interval withCallback:(void(^)(NSString*)) callback;
 
-- (void) subscribeMotion: (void(^)(float, float, float)) callback;
-- (void) unsubscribeMotion;
+- (void) getMotionValues: (double)interval withCallback:(void(^)(NSString*)) callback;
 
 @end
