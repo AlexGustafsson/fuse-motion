@@ -146,6 +146,9 @@ If you are unsure how to use values exposed from javascript through `Observables
 # Examples
 <a name="examples"></a>
 
+#### Demo app
+When built, this project will act as an app showcasing all the examples.
+
 #### [Values](https://github.com/alexgustafsson/fuse-motion/examples/values)
 Displays all available values.
 
