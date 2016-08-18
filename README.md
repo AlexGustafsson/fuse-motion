@@ -141,7 +141,7 @@ motion = Observable({
 });
 ```
 
-If you are unsure how to use values exposed from javascript through `Observables` check out the [Fuse documentation](https://www.fusetools.com/docs/fusejs/observable) and [this example](https://github.com/alexgustafsson/fuse-motion/examples/values).
+If you are unsure how to use values exposed from javascript through `Observables` check out the [Fuse documentation](https://www.fusetools.com/docs/fusejs/observable) and [this example](https://github.com/alexgustafsson/fuse-motion/tree/master/examples/values).
 
 # Examples
 <a name="examples"></a>
@@ -149,16 +149,16 @@ If you are unsure how to use values exposed from javascript through `Observables
 #### Demo app
 When built, this project will act as an app showcasing all the examples.
 
-#### [Values](https://github.com/alexgustafsson/fuse-motion/examples/values)
+#### [Values](https://github.com/alexgustafsson/fuse-motion/tree/master/examples/values)
 Displays all available values.
 
-#### [Gravity](https://github.com/alexgustafsson/fuse-motion/examples/gravity)
+#### [Gravity](https://github.com/alexgustafsson/fuse-motion/tree/master/examples/gravity)
 Uses the magnetometer to apply a gravity effect to a dropshadow.
 
-#### [Shock](https://github.com/alexgustafsson/fuse-motion/examples/shock)
+#### [Shock](https://github.com/alexgustafsson/fuse-motion/tree/master/examples/shock)
 Uses the accelerometer to detect when the phone is hit.
 
-#### [Swipe](https://github.com/alexgustafsson/fuse-motion/examples/swipe)
+#### [Swipe](https://github.com/alexgustafsson/fuse-motion/tree/master/examples/swipe)
 No more phone thumb from "swiping right"! Train your wrist by using the gyroscope to enable a swipe like feature.
 
 # Contributing
