@@ -22,8 +22,6 @@
 
       sum = sum / previousValues.length;
 
-      console.log(values.attitude.yaw - sum);
-
       if(values.attitude.yaw - sum  > 30)
         swipedLeft.value = true;
       else if(values.attitude.yaw - sum  < -30)
