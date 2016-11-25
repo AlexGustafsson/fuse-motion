@@ -9,7 +9,7 @@
     var previousValues = [];
     var updates = 0;
 
-    Motion.onMotionChanged = function(values){
+    Motion.on("motionChanged", function(values){
       values = JSON.parse(values);
 
       if(values.error)
@@ -36,7 +36,7 @@
       if(previousValues.length > 10)
         previousValues.shift();
       updates++;
-    }
+    });
 
     module.exports = {swipedLeft: swipedLeft, swipedRight: swipedRight};
   </JavaScript>

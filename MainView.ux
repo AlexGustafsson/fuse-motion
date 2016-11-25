@@ -1,16 +1,24 @@
 <App>
+  <iOS.StatusBarConfig IsVisible="False" />
+
   <Panel>
-    <JavaScript File="Motion.js"/>
+    <!--Optional file which exports all the values as observables-->
+    <JavaScript File="MotionJS.js"/>
 
     <JavaScript>
       var Motion = require("Motion");
-      Motion.Subscribe("accelerometer magnetometer gyroscope motion", 0.2);
+
+      //Subscribe to all available sensors with a delay of 200ms (0.2sec)
+      Motion.Subscribe("accelerometer magnetometer gyroscope motion activity", 0.2);
 
       module.exports = {
-        goToValues: function() { router.goto("Values"); },
+        goToValues:  function() { router.goto("Values");  },
         goToGravity: function() { router.goto("Gravity"); },
-        goToShock: function() { router.goto("Shock"); },
-        goToSwipe: function() { router.goto("Swipe"); }
+        goToShock:   function() { router.goto("Shock");   },
+        goToSwipe:   function() { router.goto("Swipe");   },
+
+        unsubscribe: function() { Motion.Unsubscribe("accelerometer magnetometer gyroscope motion activity"); },
+        subscribe:   function() { Motion.Subscribe("accelerometer magnetometer gyroscope motion activity", 0.2);}
       };
     </JavaScript>
 
@@ -18,16 +26,16 @@
 
     <DockPanel>
       <PageIndicator Dock="Bottom" Alignment="Center" Margin="5" Navigation="slides">
-          <Circle ux:Template="DotTemplate" Width="10" Height="10"  Margin="4">
-              <SolidColor ux:Name="dotStrokeBody" Color="#0000" />
-              <Stroke ux:Name="dotStroke" Width="2">
-                  <SolidColor ux:Name="dotStrokeColor" Color="#bbb" />
-              </Stroke>
-              <ActivatingAnimation>
-                  <Change dotStrokeBody.Color="#aaa" />
-                  <Change dotStrokeColor.Color="#aaa" />
-              </ActivatingAnimation>
-          </Circle>
+        <Circle ux:Template="DotTemplate" Width="10" Height="10"  Margin="4">
+          <SolidColor ux:Name="dotStrokeBody" Color="#0000" />
+          <Stroke ux:Name="dotStroke" Width="2">
+            <SolidColor ux:Name="dotStrokeColor" Color="#bbb" />
+          </Stroke>
+          <ActivatingAnimation>
+            <Change dotStrokeBody.Color="#aaa" />
+            <Change dotStrokeColor.Color="#aaa" />
+          </ActivatingAnimation>
+        </Circle>
       </PageIndicator>
     </DockPanel>
 
@@ -55,8 +63,20 @@
             </Panel>
             <Panel Margin="25" Padding="10" Clicked="{goToSwipe}" Background="0, 0, 0, 0.2">
               <StackPanel>
-                <Text Value="Swipe" FontSize="20" />
+                <Text Value="Swipe" FontSize="20"/>
                 <Text Value="No more phone thumb from swiping right! Train your wrist by using the gyroscope to enable a swipe like feature" TextWrapping="Wrap"/>
+              </StackPanel>
+            </Panel>
+            <Panel Margin="25" Padding="10" Clicked="{subscribe}" Background="0, 0, 0, 0.2">
+              <StackPanel>
+                <Text Value="Subscribe" FontSize="20"/>
+                <Text Value="Subscribe to sensor updates" TextWrapping="Wrap"/>
+              </StackPanel>
+            </Panel>
+            <Panel Margin="25, 0, 25, 25" Padding="10" Clicked="{unsubscribe}" Background="0, 0, 0, 0.2">
+              <StackPanel>
+                <Text Value="Unsubscribe" FontSize="20"/>
+                <Text Value="Unsubscribe from sensor updates" TextWrapping="Wrap"/>
               </StackPanel>
             </Panel>
           </StackPanel>

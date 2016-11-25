@@ -7,7 +7,7 @@
 
     var previousValues = [];
 
-    Motion.onMotionChanged = function(values){
+    Motion.on("motionChanged", function(values){
       values = JSON.parse(values);
 
       if(values.error)
@@ -31,7 +31,7 @@
       previousValues.push(values.userAcceleration);
       if(previousValues.length > 5)
         previousValues.shift();
-    }
+    });
 
     module.exports = {shocking: shocking};
   </JavaScript>

@@ -15,6 +15,9 @@
     "Orientations": "Portrait"
   },
   "iOS": {
-    "BundleIdentifier": "com.alexgustafsson.motion"
+    "BundleIdentifier": "com.alexgustafsson.motion",
+    "PList": {
+      "NSMotionUsageDescription": "Motion access motivation"
+    }
   }
 }

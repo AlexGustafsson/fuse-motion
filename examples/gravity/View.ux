@@ -6,7 +6,7 @@
     var angle = Observable(90);
     var distance = Observable(0);
 
-    Motion.onMotionChanged = function(values){
+    Motion.on("motionChanged", function(values){
       values = JSON.parse(values);
 
       if(values.error)
@@ -14,7 +14,7 @@
 
       angle.value = values.attitude.yaw * -1 + 90;
       distance.value = (1 - Math.abs(values.gravity.z)) * 15;
-    }
+    });
 
     module.exports = {distance: distance, angle: angle};
   </JavaScript>

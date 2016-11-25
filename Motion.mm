@@ -1,8 +1,5 @@
 #import "Motion.hh"
 
-//TODO: add magnetometer support
-//http://stackoverflow.com/questions/11711646/why-am-i-getting-0-degrees-from-magneticfield-property-the-whole-time
-
 @implementation Motion
 
 -(id)init {
@@ -12,27 +9,32 @@
   return self;
 }
 
-/*
-//Register for Coremotion notifications
-[self.motionActivityManager startActivityUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMMotionActivity *activity)
-{
-  NSLog(@"Got a core motion update");
-  NSLog(@"Current activity date is %f",activity.timestamp);
-  NSLog(@"Current activity confidence from a scale of 0 to 2 - 2 being best- is: %ld",activity.confidence);
-  NSLog(@"Current activity type is unknown: %i",activity.unknown);
-  NSLog(@"Current activity type is stationary: %i",activity.stationary);
-  NSLog(@"Current activity type is walking: %i",activity.walking);
-  NSLog(@"Current activity type is running: %i",activity.running);
-  NSLog(@"Current activity type is automotive: %i",activity.automotive);
-}];
-*/
+//Continously retrieve the activity
+- (void) getActivity: (double)interval withCallback:(void(^)(NSString*)) callback{
+  if(self.activityManager == nil)
+    self.activityManager = [[CMMotionActivityManager alloc] init];
+
+  //The handler of activity updates doesn't provide a error, therefore omitted
+  [self.activityManager startActivityUpdatesToQueue:[NSOperationQueue mainQueue]
+   withHandler:^(CMMotionActivity *activity)
+   {
+     callback([NSString stringWithFormat:@"{\"unknown\": %s, \"stationary\": %s, \"walking\": %s, \"running\": %s, \"automotive\": %s, \"cycling\": %s, \"confidence\": \"%s\"}",
+       activity.unknown ? "true" : "false", activity.stationary ? "true" : "false", activity.walking ? "true" : "false", activity.running ? "true" : "false", activity.automotive ? "true" : "false", activity.cycling ? "true" : "false", activity.confidence == 0 ? "low" : (activity.confidence == 1 ? "medium" : "high")
+       ]);
+   }];
+}
+- (void) stopActivity{
+  if(self.activityManager != nil)
+    [self.activityManager stopActivityUpdates];
+}
+
 
 //Continously retrieve 3D accelerometer values measured in G:s
 - (void) getAccelerometerValues: (double)interval withCallback:(void(^)(NSString*)) callback{
   if(self.manager == nil)
-      self.manager = [[CMMotionManager alloc] init];
+    self.manager = [[CMMotionManager alloc] init];
 
-  if(self.manager.accelerometerAvailable){
+  if(self.manager.accelerometerAvailable && !self.manager.accelerometerActive){
     self.manager.accelerometerUpdateInterval = interval;
 
     [self.manager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue]
@@ -51,15 +53,24 @@
           accelerometer.acceleration.x, accelerometer.acceleration.y, accelerometer.acceleration.z
           ]);
      }];
+  } else if(!self.manager.accelerometerAvailable){
+    callback([NSString stringWithFormat:@"{\
+      \"error\": {\"description\": %s}}",
+      "accelerometer is not available"
+      ]);
   }
+}
+- (void) stopAccelerometer{
+  if(self.manager != nil)
+    [self.manager stopAccelerometerUpdates];
 }
 
 //Continously retrieve 3D rotation rates measured in angles
 - (void) getGyroValues: (double)interval withCallback:(void(^)(NSString*)) callback{
   if(self.manager == nil)
-      self.manager = [[CMMotionManager alloc] init];
+    self.manager = [[CMMotionManager alloc] init];
 
-  if(self.manager.gyroAvailable){
+  if(self.manager.gyroAvailable && !self.manager.gyroActive){
     self.manager.gyroUpdateInterval = interval;
 
     [self.manager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
@@ -81,14 +92,23 @@
            degreesFromRadian * gyro.rotationRate.x, degreesFromRadian * gyro.rotationRate.y, degreesFromRadian * gyro.rotationRate.z
            ]);
      }];
+  } else if(!self.manager.gyroAvailable){
+    callback([NSString stringWithFormat:@"{\
+      \"error\": {\"description\": %s}}",
+      "gyroscope is not available"
+      ]);
   }
+}
+- (void) stopGyroscope{
+  if(self.manager != nil)
+    [self.manager stopGyroUpdates];
 }
 
 - (void) getMagnetometerValues: (double)interval withCallback:(void(^)(NSString*)) callback{
   if(self.manager == nil)
-      self.manager = [[CMMotionManager alloc] init];
+    self.manager = [[CMMotionManager alloc] init];
 
-  if(self.manager.magnetometerAvailable){
+  if(self.manager.magnetometerAvailable && !self.manager.magnetometerActive){
     self.manager.magnetometerUpdateInterval = interval;
 
     [self.manager startMagnetometerUpdatesToQueue:[NSOperationQueue mainQueue]
@@ -107,14 +127,23 @@
           magnetometer.magneticField.x, magnetometer.magneticField.y, magnetometer.magneticField.z
           ]);
      }];
+  } else if(!self.manager.magnetometerAvailable){
+    callback([NSString stringWithFormat:@"{\
+      \"error\": {\"description\": %s}}",
+      "magnetometer is not available"
+      ]);
   }
+}
+- (void) stopMagnetometer{
+  if(self.manager != nil)
+    [self.manager stopMagnetometerUpdates];
 }
 
 - (void) getMotionValues: (double)interval withCallback:(void(^)(NSString*)) callback{
     if(self.manager == nil)
-        self.manager = [[CMMotionManager alloc] init];
+      self.manager = [[CMMotionManager alloc] init];
 
-  if(self.manager.deviceMotionAvailable){
+  if(self.manager.deviceMotionAvailable && !self.manager.deviceMotionActive){
     self.manager.deviceMotionUpdateInterval = interval;
 
     [self.manager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue]
@@ -129,9 +158,6 @@
          return;
        }
 
-       //Return in degrees instead of radians
-         double degreesFromRadian = 180 / M_PI;
-
          //Return in degrees instead of radians
          double degreesFromRadian = 180 / M_PI;
 
@@ -142,7 +168,7 @@
              self.previousAttitudeYaw = yaw;
          }
 
-         // kalman filtering
+         //Kalman filtering
          static float q = 0.1;   // process noise
          static float r = 0.1;   // sensor noise
          static float p = 0.1;   // estimated error
@@ -168,7 +194,16 @@
            motion.userAcceleration.x, motion.userAcceleration.y, motion.userAcceleration.z
            ]);
      }];
+  } else if(!self.manager.deviceMotionActive){
+    callback([NSString stringWithFormat:@"{\
+      \"error\": {\"description\": %s}}",
+      "device motion is not available"
+      ]);
   }
+}
+- (void) stopMotion{
+  if(self.manager != nil)
+    [self.manager stopDeviceMotionUpdates];
 }
 
 @end

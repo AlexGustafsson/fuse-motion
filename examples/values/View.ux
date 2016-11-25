@@ -1,49 +1,49 @@
 <Page ux:Class="Values" Padding="10">
 	<ScrollView>
 		<StackPanel>
-				<Text Value="Accelerometer" Margin="0, 10, 0, 0"/>
+				<Text Value="Accelerometer (x,y,z)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{accelerometer.acceleration.x}" FontSize="20"/>
 					<Text Value="{accelerometer.acceleration.y}" FontSize="20"/>
 					<Text Value="{accelerometer.acceleration.z}" FontSize="20"/>
 				</StackPanel>
 
-				<Text Value="Gyroscope" Margin="0, 10, 0, 0"/>
+				<Text Value="Gyroscope (x,y,z)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{gyroscope.rotationRate.x}" FontSize="20"/>
 					<Text Value="{gyroscope.rotationRate.y}" FontSize="20"/>
 					<Text Value="{gyroscope.rotationRate.z}" FontSize="20"/>
 				</StackPanel>
 
-				<Text Value="Magnetometer" Margin="0, 10, 0, 0"/>
+				<Text Value="Magnetometer (x,y,z)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{magnetometer.magneticField.x}" FontSize="20"/>
 					<Text Value="{magnetometer.magneticField.y}" FontSize="20"/>
 					<Text Value="{magnetometer.magneticField.z}" FontSize="20"/>
 				</StackPanel>
 
-				<Text Value="Attitude" Margin="0, 10, 0, 0"/>
+				<Text Value="Attitude (yaw, pitch, roll)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{motion.attitude.yaw}" FontSize="20"/>
 					<Text Value="{motion.attitude.pitch}" FontSize="20"/>
 					<Text Value="{motion.attitude.roll}" FontSize="20"/>
 				</StackPanel>
 
-				<Text Value="Rotation rate" Margin="0, 10, 0, 0"/>
+				<Text Value="Rotation rate (x,y,z)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{motion.rotationRate.x}" FontSize="20"/>
 					<Text Value="{motion.rotationRate.y}" FontSize="20"/>
 					<Text Value="{motion.rotationRate.z}" FontSize="20"/>
 				</StackPanel>
 
-				<Text Value="Gravity" Margin="0, 10, 0, 0"/>
+				<Text Value="Gravity (x,y,z)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{motion.gravity.x}" FontSize="20"/>
 					<Text Value="{motion.gravity.y}" FontSize="20"/>
 					<Text Value="{motion.gravity.z}" FontSize="20"/>
 				</StackPanel>
 
-				<Text Value="Magnetic field" Margin="0, 10, 0, 0"/>
+				<Text Value="Magnetic field (x,y,z)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{motion.magneticField.accuracy}" FontSize="20"/>
 					<Text Value="{motion.magneticField.x}" FontSize="20"/>
@@ -51,11 +51,43 @@
 					<Text Value="{motion.magneticField.z}" FontSize="20"/>
 				</StackPanel>
 
-				<Text Value="User acceleration" Margin="0, 10, 0, 0"/>
+				<Text Value="User acceleration (x,y,z)" Margin="0, 10, 0, 0"/>
 				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
 					<Text Value="{motion.userAcceleration.x}" FontSize="20"/>
 					<Text Value="{motion.userAcceleration.y}" FontSize="20"/>
 					<Text Value="{motion.userAcceleration.z}" FontSize="20"/>
+				</StackPanel>
+
+				<Text Value="Activities" Margin="0, 10, 0, 10"/>
+				<StackPanel Background="0,0,0,0.2" Padding="10, 5, 5, 5">
+					<StackPanel Orientation="Horizontal">
+						<Text Value="Unknown: " FontSize="20" />
+						<Text Value="{activity.unknown}" FontSize="20" Alignment="Left"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Text Value="Stationary: " FontSize="20"/>
+						<Text Value="{activity.stationary}" FontSize="20" Alignment="Left"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Text Value="Walking: " FontSize="20"/>
+						<Text Value="{activity.walking}" FontSize="20" Alignment="Left"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Text Value="Running: " FontSize="20"/>
+						<Text Value="{activity.running}" FontSize="20" Alignment="Left"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Text Value="Automotive: " FontSize="20"/>
+						<Text Value="{activity.automotive}" FontSize="20" Alignment="Left"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Text Value="Cycling: " FontSize="20"/>
+						<Text Value="{activity.cycling}" FontSize="20" Alignment="Left"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Text Value="Confidence: " FontSize="20" Alignment="Left"/>
+						<Text Value="{activity.confidence}" FontSize="20"/>
+					</StackPanel>
 				</StackPanel>
 		</StackPanel>
 	</ScrollView>
