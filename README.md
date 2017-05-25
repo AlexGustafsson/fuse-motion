@@ -1,7 +1,9 @@
 Motion  - iOS accelerometer, gyroscope, magnetometer readings and more for Fuse
 ======
 
-<center>![App preview](https://github.com/AlexGustafsson/fuse-motion/raw/master/assets/preview.gif)</center>
+<p align="center">
+  <img alt="App preview" src="https://github.com/AlexGustafsson/fuse-motion/raw/master/assets/preview.gif">
+<p>
 
 Motion is an easy to use integration of all iOS's sensors reflecting motion, made for [Fuse](https://fusetools.com). It enables easy creation of compasses, motion trackers, activity trackers and so on.
 
