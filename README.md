@@ -11,7 +11,7 @@ Motion is an easy to use integration of all iOS's sensors reflecting motion, mad
 <a name="quickstart"></a>
 
 #### Install Motion
-Right now a manual installation is required. Requires Fuse 0.30.0.
+Right now a manual installation is required. Requires Fuse 0.30.0 or above.
 
 Copy the following files to your project:
 - Motion.js
@@ -233,4 +233,4 @@ Any help with the project is more than welcome. This is my first take on Uno and
 
 _Although the project is very capable, it is not built with production in mind. Therefore there might be complications when trying to use Motion for large-scale projects meant for the public. Motion was created to easily integrate sensor readings on iOS and as such it might not promote best practices nor be performant._
 
-_Built with Fuse 0.30.0 (build 8529) and Xcode Version 8.1 (8B62), tested on iPhone 6 iOS 10.2 Public Beta 2._
+_Built with Fuse 0.30.0 (build 8529) and Xcode Version 8.1 (8B62), tested on iPhone 6 iOS 10.2 and 10.2.1. Tested with Fuse 1.1.0 (build 13808)._
