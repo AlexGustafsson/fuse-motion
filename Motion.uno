@@ -21,7 +21,7 @@ public class MotionModule : NativeEventEmitterModule
       return;
 
 		_instance = this;
-		Resource.SetGlobalKey(_instance, "Motion");
+		Uno.UX.Resource.SetGlobalKey(_instance, "Motion");
 
 		AddMember(new NativeFunction("Subscribe", (NativeCallback)Subscribe));
 
